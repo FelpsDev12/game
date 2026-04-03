@@ -38,7 +38,7 @@ imagens.dashL.src = 'assets/dashL.png';
 let imagemAtual = imagens.idleR;
 let imagemOther = imagens.idleR;
 
-const WS_URL = 
+const WS_URL = "wss://game-backend-fspb.onrender.com"
 
 let ready = false
 
@@ -70,7 +70,7 @@ sendButton.onclick = () => {
 
 	usernameP1.textContent = username;
 
-	socket = new WebSocket('ws://localhost:3000');
+	socket = new WebSocket(`${WS_URL}`);
 
 	socket.onopen = () => {
 		console.log("Conectado!");
