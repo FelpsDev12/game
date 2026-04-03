@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Canvas</title>
+	<link rel="stylesheet" href="style.css">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+	<div id="playerInfo">
+		<h3 id="usernameP1">???</h3>
+		<h3 id="usernameP2">???</h3>
+	</div>
+
+	<div id="playerSetInfo">
+		<h2>Qual será seu nome?</h2>
+		<div id="flexInput">
+		<input type="text" id="nameInput">
+		<button id="sendButton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#FFFFFF"><path d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z"/></svg></button>
+		</div>
+	</div>
+
+	<canvas width="1000" height="520" id="canvas"></canvas>
+	
+	<script src="index.js" type="module"></script>
+	<script src="inputs.js" type="module"></script>
+</body>
+</html>

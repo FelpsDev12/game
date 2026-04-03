@@ -1,0 +1,76 @@
+* {
+	font-family: 'Inter';
+		color: white;
+
+}
+
+canvas {
+	border: solid black;
+	position: relative;
+	left: 50%;
+	transform: translateX(-50%);
+	margin-top: 5%;
+	z-index: 1;
+}
+
+#playerSetInfo {
+	position: absolute;
+	align-self: center;
+	left: 50%;
+	transform: translateX(-50%);
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+	align-items: center;
+	z-index: 2;
+
+	h2 {
+		font-size: 30px;
+	}
+
+	#flexInput {
+		display: flex;
+		gap: 15px;
+
+		input {
+      background-color: white;
+	  border: solid black;
+	  padding: 5px;
+	  border-radius: 10px;
+	  cursor: pointer;
+	  color: #333;
+	  outline: none;
+	}
+
+
+#sendButton {
+	cursor: pointer;
+	border-radius: 30px;
+	padding: 0;
+	width: 35px;
+	height: 35px;
+	background: #333;
+	border: solid white;
+}
+
+#sendButton:hover {
+	transform: scale(1.1);
+}
+
+	}
+}
+
+#playerInfo {
+	position: absolute;
+	top: 90px;
+	left: 50%;
+	transform: translateX(-50%);
+	display: flex;
+	width: 800px;
+	justify-content: space-between;
+}
+
+body {
+	background-color: #333;
+	height: 100dvh;
+}
