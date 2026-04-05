@@ -15,7 +15,6 @@ let socket;
 let username;
 let paused = true;
 let otherUsername;
-let player2 = { x: 0, y: 0 };
 let right = true;
 let left = false;
 
@@ -40,7 +39,10 @@ let imagemOther = imagens.idleR;
 
 const WS_URL = "wss://game-backend-fspb.onrender.com"
 
+//"http://localhost:3001"
 let ready = false
+const vida1 = document.getElementById("barraum") 
+const vida2 = document.getElementById("barradois")
 
 const GRAVITY = 0.3;
 const JUMP_FORCE = -10;
@@ -53,13 +55,18 @@ let ultimoTempo = 0;
 const fpsDesejado = 10;
 const intervaloFrame = 1000 / fpsDesejado;
 let acumuladorTempo = 0;
+let serverCtrl = false
 
 const teclas = {};
 let dashCharged = true;
 let dashing = false;
 let dashTimer = 0;
+let controller = false
+let barraW = "300"
 
 let serverReady
+let myHealth
+let serverHealth
 
 window.addEventListener("keydown", (e) => teclas[e.key] = true);
 window.addEventListener("keyup", (e) => teclas[e.key] = false);
@@ -98,8 +105,18 @@ sendButton.onclick = () => {
 			serverReady = dados.ready
 		}
 
-		player2.x = dados.x;
-		player2.y = dados.y;
+		if (dados.damaged == true && serverCtrl == false) {
+			serverCtrl = true
+			vida1.style.width = vida1.clientWidth - 30 + 'px'
+			setTimeout(() => {
+				serverCtrl = false
+			},500)
+		}
+
+		entitys.player2.x = dados.x;
+		entitys.player2.y = dados.y;
+		entitys.player2.health = dados.serverHealth
+		entitys.player1.health = dados.myHealth
 
 		if (dados.isWalking) {
 			imagemOther = dados.isRight ? imagens.walkR : imagens.walkL;
@@ -126,6 +143,16 @@ function loopPrincipal(tempoAtual) {
 	if (teclas[" "] && entitys.player1.noChao) {
 		entitys.player1.vy += JUMP_FORCE;
 		entitys.player1.noChao = false;
+	}
+
+	if (teclas["f"] && checkCollision(entitys.player1, entitys.player2) && controller == false) {
+		controller = true
+		console.log("Voce acertou o outro cara bro")
+		entitys.player2.health -= 10
+		vida2.style.width = vida2.clientWidth - 30 + "px"
+		setTimeout( () => {
+				controller = false
+		}, 500)
 	}
 
 	if (teclas["q"] && dashCharged) {
@@ -168,9 +195,14 @@ function loopPrincipal(tempoAtual) {
 			onFloor: entitys.player1.noChao,
 			isDashing: dashing,
 			isRight: right,
-			ready: ready
+			ready: ready,
+			myHealth: entitys.player1.health,
+			serverHealth: entitys.player2.health,
+			damaged: controller
 		}));
 	}
+
+	entitys.player1.health = myHealth
 
 	if (acumuladorTempo >= intervaloFrame) {
 		frameAtual = (frameAtual + 1) % totalFrames;
@@ -208,7 +240,7 @@ function renderizar() {
 	ctx.drawImage(
 		imagemOther,
 		frameAtual * larguraSprite, 0, larguraSprite, alturaSprite,
-		player2.x, player2.y, larguraSprite * 3, alturaSprite * 3
+		entitys.player2.x, entitys.player2.y, larguraSprite * 3, alturaSprite * 3
 	);
 }
 
