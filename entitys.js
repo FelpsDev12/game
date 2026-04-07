@@ -9,7 +9,8 @@ player1: {
 	vy: 0,
 	noChao: true,
 	w: 80,
-	h: 80
+	h: 80,
+	health: 100
 },
 
 player2: {
@@ -17,7 +18,8 @@ player2: {
 	y: '',
 	velocidade: 4,
 	w: 80,
-	h: 80
+	h: 80,
+	health: 100
 }
 
 }

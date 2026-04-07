@@ -1,39 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Canvas</title>
 	<link rel="stylesheet" href="style.css">
 	<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link
+		href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+		rel="stylesheet">
 </head>
+
 <body>
 
 	<div id="playerInfo">
-		<div id="player1">
-		<h3 id="usernameP1">???</h3>
-		<div id="barraum"></div>
+		<div id="player1" class="healthBar">
+			<h3 id="usernameP1">???</h3>
+			<div id="barraum"></div>
+			<h3 id="boolean" style="display: none;">Undefined</h3>
 		</div>
 
-		<div id="player2">
-		<h3 id="usernameP2">???</h3>
-		<div id="barradois"></div>
+		<div id="player2" class="healthBar">
+			<h3 id="usernameP2">???</h3>
+			<div id="barradois"></div>
+			<button id="tester" style="background: #333; ">Debounce</button>
 		</div>
 	</div>
 
 	<div id="playerSetInfo">
 		<h2>Qual será seu nome?</h2>
 		<div id="flexInput">
-		<input type="text" id="nameInput">
-		<button id="sendButton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#FFFFFF"><path d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z"/></svg></button>
+			<input type="text" id="nameInput">
+			<button id="sendButton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#FFFFFF">
+					<path
+						d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z" />
+				</svg></button>
+		</div>
+	</div>
+
+	<div id="btns">
+
+		<div id="actions">
+			<button id="attack" fun="f" class="movBtns"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"
+					fill="#FFFFFF">
+					<path
+						d="M762-96 645-212l-88 88-28-28q-23-23-23-57t23-57l169-169q23-23 57-23t57 23l28 28-88 88 116 117q12 12 12 28t-12 28l-50 50q-12 12-28 12t-28-12Zm118-628L426-270l5 4q23 23 23 57t-23 57l-28 28-88-88L198-96q-12 12-28 12t-28-12l-50-50q-12-12-12-28t12-28l116-117-88-88 28-28q23-23 57-23t57 23l4 5 454-454h160v160ZM334-583l24-23 23-24-23 24-24 23Zm-56 57L80-724v-160h160l198 198-57 56-174-174h-47v47l174 174-56 57Zm92 199 430-430v-47h-47L323-374l47 47Zm0 0-24-23-23-24 23 24 24 23Z" />
+				</svg></button>
+			<button id="jump" fun=" " class="movBtns"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"
+					fill="#FFFFFF">
+					<path
+						d="M360-160v-120H160l320-360 320 360H600v120H360Zm80-80h80v-120h102L480-520 338-360h102v120ZM160-480l320-360 320 360H693L480-720 267-480H160Zm320 120Z" />
+				</svg></button>
+		</div>
+
+		<button id="dash" fun="q" class="movBtns"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"
+				fill="#FFFFFF">
+				<path
+					d="M383-480 200-664l56-56 240 240-240 240-56-56 183-184Zm264 0L464-664l56-56 240 240-240 240-56-56 183-184Z" />
+			</svg></button>
+
+		<div id="mov">
+			<button id="right" fun="d" class="movBtns"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"
+					fill="#FFFFFF">
+					<path d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z" />
+				</svg></button>
+			<button id="left" fun="a" class="movBtns"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"
+					fill="#FFFFFF">
+					<path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z" />
+				</svg></button>
 		</div>
 	</div>
 
 	<canvas width="1000" height="520" id="canvas"></canvas>
-	
+
 	<script src="index.js" type="module"></script>
 	<script src="inputs.js" type="module"></script>
 </body>
+
 </html>

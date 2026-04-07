@@ -1,8 +1,10 @@
 import { entitys } from "./entitys.js";
-import { platforms } from "./platforms.js";
 import { inputs } from "./inputs.js";
+import { Debounce } from "./modules.js";
+import { platforms } from "./platforms.js";
 
 const usernameInput = document.getElementById("nameInput");
+const healthBar = document.querySelector(".healthBar");
 const sendButton = document.getElementById("sendButton");
 const usernameP1 = document.getElementById("usernameP1");
 const usernameP2 = document.getElementById("usernameP2");
@@ -10,6 +12,15 @@ const playerSetInfo = document.getElementById("playerSetInfo");
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext("2d");
 ctx.imageSmoothingEnabled = false;
+
+const btnsM = {
+	right: 'd',
+	left: 'a',
+	jump: ' ',
+	attack: 'f',
+	dash: 'q'
+}
+
 
 let socket;
 let username;
@@ -41,7 +52,7 @@ const WS_URL = "wss://game-backend-fspb.onrender.com"
 
 //"http://localhost:3001"
 let ready = false
-const vida1 = document.getElementById("barraum") 
+const vida1 = document.getElementById("barraum")
 const vida2 = document.getElementById("barradois")
 
 const GRAVITY = 0.3;
@@ -63,6 +74,9 @@ let dashing = false;
 let dashTimer = 0;
 let controller = false
 let barraW = "300"
+let mode;
+let clientDied
+let serverDied
 
 let serverReady
 let myHealth
@@ -70,6 +84,42 @@ let serverHealth
 
 window.addEventListener("keydown", (e) => teclas[e.key] = true);
 window.addEventListener("keyup", (e) => teclas[e.key] = false);
+
+window.addEventListener("keydown", (e) => {
+	if (e.key === "f" && !Debounce.Check("controlAwait")) {
+		Debounce.Add("controlAwait", 800)
+		controller = true
+		entitys.player2.health -= 10
+		vida2.style.width = vida2.clientWidth - 30 + "px"
+		console.warn(`minha Vida: ${entitys.player1.health} \n Adversario: ${entitys.player2.health}`)
+	}
+})
+
+function isAMobile() {
+	const query = window.matchMedia("(max-width: 768px)").matches
+
+	if (!query) {
+		console.log("Desktop")
+		hideButtons()
+		return false
+	}
+
+	console.log("Mobile")
+	return true
+}
+
+function showButtons() {
+	document.getElementById("btns").style.display = 'flex'
+}
+
+function hideButtons() {
+	document.getElementById("btns").style.display = 'none'
+}
+
+function showHealthBar() {
+	vida1.style.display = 'flex'
+	vida2.style.display = 'flex'
+}
 
 sendButton.onclick = () => {
 	username = usernameInput.value;
@@ -82,9 +132,18 @@ sendButton.onclick = () => {
 	socket.onopen = () => {
 		console.log("Conectado!");
 
+		isAMobile()
+
 		playerSetInfo.style.display = 'none';
+		showHealthBar()
+		showButtons()
+		canvas.style.zIndex = "9"
 		paused = false;
 		ready = true
+
+		if (isAMobile) {
+			showButtons()
+		}
 
 		socket.send(JSON.stringify({ isOtherUsername: username, ready: ready }));
 
@@ -102,21 +161,23 @@ sendButton.onclick = () => {
 
 		if (dados.ready == true) {
 			console.log("Servidor Pronto")
+			document.getElementById("boolean").style.display = 'flex'
 			serverReady = dados.ready
 		}
 
-		if (dados.damaged == true && serverCtrl == false) {
-			serverCtrl = true
-			vida1.style.width = vida1.clientWidth - 30 + 'px'
-			setTimeout(() => {
-				serverCtrl = false
-			},500)
+		if (dados.serverDied) {
+			serverDied = true
 		}
+
+		if (dados.damaged && !Debounce.Check("controlAwait")) {
+			vida1.style.width = vida1.clientWidth - 30 + 'px'
+			entitys.player1.health -= 10
+		}
+
+		document.getElementById("boolean").textContent = `Damaged: ${dados.damaged}`
 
 		entitys.player2.x = dados.x;
 		entitys.player2.y = dados.y;
-		entitys.player2.health = dados.serverHealth
-		entitys.player1.health = dados.myHealth
 
 		if (dados.isWalking) {
 			imagemOther = dados.isRight ? imagens.walkR : imagens.walkL;
@@ -132,7 +193,6 @@ sendButton.onclick = () => {
 	socket.onerror = () => alert("Erro ao conectar no servidor!");
 };
 
-
 function loopPrincipal(tempoAtual) {
 	if (paused) return;
 
@@ -143,16 +203,6 @@ function loopPrincipal(tempoAtual) {
 	if (teclas[" "] && entitys.player1.noChao) {
 		entitys.player1.vy += JUMP_FORCE;
 		entitys.player1.noChao = false;
-	}
-
-	if (teclas["f"] && checkCollision(entitys.player1, entitys.player2) && controller == false) {
-		controller = true
-		console.log("Voce acertou o outro cara bro")
-		entitys.player2.health -= 10
-		vida2.style.width = vida2.clientWidth - 30 + "px"
-		setTimeout( () => {
-				controller = false
-		}, 500)
 	}
 
 	if (teclas["q"] && dashCharged) {
@@ -186,6 +236,25 @@ function loopPrincipal(tempoAtual) {
 		imagemAtual = right ? imagens.idleR : imagens.idleL;
 	}
 
+	if (entitys.player1.health <= 0) {
+		clientDied = true
+	}
+
+	Object.keys(btnsM).forEach(id => {
+		const element = document.getElementById(id)
+		const press = btnsM[id]
+
+		element.addEventListener("touchstart", (e) => {
+			e.preventDefault()
+			teclas[press] = true
+		})
+
+		element.addEventListener("touchend", (e) => {
+			e.preventDefault()
+			teclas[press] = false
+		})
+	})
+
 	if (socket && socket.readyState === WebSocket.OPEN) {
 		socket.send(JSON.stringify({
 			x: entitys.player1.x,
@@ -198,11 +267,12 @@ function loopPrincipal(tempoAtual) {
 			ready: ready,
 			myHealth: entitys.player1.health,
 			serverHealth: entitys.player2.health,
-			damaged: controller
+			damaged: controller,
+			clientDied: clientDied,
+			serverDied: serverDied
 		}));
+		controller = false
 	}
-
-	entitys.player1.health = myHealth
 
 	if (acumuladorTempo >= intervaloFrame) {
 		frameAtual = (frameAtual + 1) % totalFrames;
@@ -230,13 +300,16 @@ function renderizar() {
 	ctx.fillStyle = platforms.floor.color;
 	ctx.fillRect(0, platforms.floor.y, platforms.floor.w, platforms.floor.h);
 
-	ctx.drawImage(
-		imagemAtual,
-		frameAtual * larguraSprite, 0, larguraSprite, alturaSprite,
-		entitys.player1.x, entitys.player1.y, larguraSprite * 3, alturaSprite * 3
-	);
+	if (!clientDied) {
+		ctx.drawImage(
+			imagemAtual,
+			frameAtual * larguraSprite, 0, larguraSprite, alturaSprite,
+			entitys.player1.x, entitys.player1.y, larguraSprite * 3, alturaSprite * 3
+		);
+	}
 
-	if (!serverReady) return; 
+	if (!serverReady) return;
+	if (serverHealth <= 0) return;
 	ctx.drawImage(
 		imagemOther,
 		frameAtual * larguraSprite, 0, larguraSprite, alturaSprite,
@@ -249,7 +322,10 @@ function checkCollision(obj1, obj2) {
 		obj1.x + obj1.w > obj2.x &&
 		obj1.y < obj2.y + obj2.h &&
 		obj1.y + obj1.h > obj2.y;
-}
+};
+
+window.addEventListener("resize", isAMobile)
+document.addEventListener("DOMContentLoaded", isAMobile)
 
 document.addEventListener("visibilitychange", () => {
 	if (document.hidden) {
