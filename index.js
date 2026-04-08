@@ -95,7 +95,7 @@ window.addEventListener("keydown", (e) => {
 	}
 })
 
-document.getElementById("attack").addEventListener("touchstart", () => {
+document.getElementById("attack").onclick = () => {
 	if (Debounce.Check("controlAwait")) {
 		Debounce.Add("controlAwait", 800)
 		controller = true
@@ -103,7 +103,7 @@ document.getElementById("attack").addEventListener("touchstart", () => {
 		vida2.style.width = vida2.clientWidth - 30 + "px"
 		console.warn(`minha Vida: ${entitys.player1.health} \n Adversario: ${entitys.player2.health}`)
 	}
-})
+}
 
 function isAMobile() {
 	const query = window.matchMedia("(max-width: 768px)").matches
