@@ -4,7 +4,9 @@ import { Debounce } from "./modules.js";
 import { platforms } from "./platforms.js";
 
 const usernameInput = document.getElementById("nameInput");
+const playerInfo = document.getElementById("playerInfo");
 const healthBar = document.querySelector(".healthBar");
+const mainScreen = document.querySelector(".mainScreen");
 const sendButton = document.getElementById("sendButton");
 const usernameP1 = document.getElementById("usernameP1");
 const usernameP2 = document.getElementById("usernameP2");
@@ -17,10 +19,8 @@ const btnsM = {
 	right: 'd',
 	left: 'a',
 	jump: ' ',
-	attack: 'f',
 	dash: 'q'
 }
-
 
 let socket;
 let username;
@@ -95,6 +95,16 @@ window.addEventListener("keydown", (e) => {
 	}
 })
 
+document.getElementById("attack").addEventListener("touchstart", () => {
+	if (Debounce.Check("controlAwait")) {
+		Debounce.Add("controlAwait", 800)
+		controller = true
+		entitys.player2.health -= 10
+		vida2.style.width = vida2.clientWidth - 30 + "px"
+		console.warn(`minha Vida: ${entitys.player1.health} \n Adversario: ${entitys.player2.health}`)
+	}
+})
+
 function isAMobile() {
 	const query = window.matchMedia("(max-width: 768px)").matches
 
@@ -134,12 +144,14 @@ sendButton.onclick = () => {
 
 		isAMobile()
 
-		playerSetInfo.style.display = 'none';
 		showHealthBar()
 		showButtons()
 		canvas.style.zIndex = "9"
 		paused = false;
 		ready = true
+		canvas.style.display = ''
+		playerInfo.style.display = ''
+		mainScreen.style.display = 'none'
 
 		if (isAMobile) {
 			showButtons()

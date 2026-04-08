@@ -8,14 +8,51 @@
 	<link rel="stylesheet" href="style.css">
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link
-		href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+		href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Londrina+Solid:wght@100;300;400;900&family=Rubik+Mono+One&display=swap"
 		rel="stylesheet">
+
 </head>
 
 <body>
 
-	<div id="playerInfo">
+	<div class="mainScreen">
+
+		<img id="logo" src="assets/Gifs/MetalGladiersGif.gif"></img>
+
+		<div id="playerSetInfo">
+			<h2>Digite um nome</h2>
+			<div id="flexInput">
+				<input type="text" id="nameInput">
+				<button id="sendButton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#FFFFFF">
+						<path
+							d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z" />
+					</svg></button>
+			</div>
+		</div>
+	</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	<div id="playerInfo" style="display: none;">
 		<div id="player1" class="healthBar">
 			<h3 id="usernameP1">???</h3>
 			<div id="barraum"></div>
@@ -29,19 +66,7 @@
 		</div>
 	</div>
 
-	<div id="playerSetInfo">
-		<h2>Qual será seu nome?</h2>
-		<div id="flexInput">
-			<input type="text" id="nameInput">
-			<button id="sendButton"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#FFFFFF">
-					<path
-						d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z" />
-				</svg></button>
-		</div>
-	</div>
-
 	<div id="btns">
-
 		<div id="actions">
 			<button id="attack" fun="f" class="movBtns"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"
 					fill="#FFFFFF">
@@ -73,7 +98,7 @@
 		</div>
 	</div>
 
-	<canvas width="1000" height="520" id="canvas"></canvas>
+	<canvas width="1000" height="520" id="canvas" style="display: none;"></canvas>
 
 	<script src="index.js" type="module"></script>
 	<script src="inputs.js" type="module"></script>
