@@ -48,7 +48,7 @@ imagens.dashL.src = 'assets/dashL.png';
 let imagemAtual = imagens.idleR;
 let imagemOther = imagens.idleR;
 
-const WS_URL = "wss://game-backend-fspb.onrender.com "
+const WS_URL = "wss://game-backend-fspb.onrender.com"
 
 /// http://localhost:3001
 let ready = false
