@@ -97,7 +97,7 @@ window.addEventListener("keydown", (e) => teclas[e.key] = true);
 window.addEventListener("keyup", (e) => teclas[e.key] = false);
 
 window.addEventListener("keydown", (e) => {
-	if (e.key === "f" && !Debounce.Check("controlAwait")) {
+	if (e.key === "f" && !Debounce.Check("controlAwait") && checkCollision(entitys.player1, entitys.player2)) {
 		Debounce.Add("controlAwait", 800)
 		controller = true
 		entitys.player2.health -= 10
@@ -107,7 +107,7 @@ window.addEventListener("keydown", (e) => {
 })
 
 document.getElementById("attack").addEventListener("touchstart", () => {
-	if (!Debounce.Check("controlAwait")) {
+	if (!Debounce.Check("controlAwait") && checkCollision(entitys.player1, entitys.player2)) {
 		Debounce.Add("controlAwait", 800)
 		controller = true
 		entitys.player2.health -= 10
