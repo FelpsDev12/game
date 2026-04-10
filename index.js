@@ -48,9 +48,9 @@ imagens.dashL.src = 'assets/dashL.png';
 let imagemAtual = imagens.idleR;
 let imagemOther = imagens.idleR;
 
-const WS_URL = "http://localhost:3001"
+const WS_URL = "wss://game-backend-fspb.onrender.com "
 
-//wss://game-backend-fspb.onrender.com / 
+/// http://localhost:3001
 let ready = false
 const vida1 = document.getElementById("barraum")
 const vida2 = document.getElementById("barradois")
