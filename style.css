@@ -30,6 +30,7 @@ canvas {
 	h2 {
 		font-size: 30px;
 		background: var(--fontColor);
+		background-clip: border-box;
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;
 	}
@@ -197,7 +198,6 @@ body {
 		}
 
 		#attack {
-			order: 2;
 			padding: 10px;
 		}
 	}

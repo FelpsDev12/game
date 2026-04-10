@@ -48,9 +48,9 @@ imagens.dashL.src = 'assets/dashL.png';
 let imagemAtual = imagens.idleR;
 let imagemOther = imagens.idleR;
 
-const WS_URL = "wss://game-backend-fspb.onrender.com"
+const WS_URL = "http://localhost:3001"
 
-//"http://localhost:3001"
+//wss://game-backend-fspb.onrender.com / 
 let ready = false
 const vida1 = document.getElementById("barraum")
 const vida2 = document.getElementById("barradois")
@@ -75,12 +75,23 @@ let dashTimer = 0;
 let controller = false
 let barraW = "300"
 let mode;
-let clientDied
-let serverDied
+let clientDied = false
+let serverDied = false
 
 let serverReady
 let myHealth
 let serverHealth
+
+function resetGame() {
+	ready = false
+	paused = false
+	entitys.player1.health = 100
+	 entitys.player2.health = 100
+
+	canvas.style.display = 'none'
+	playerInfo.style.display = 'none'
+	mainScreen.style.display = ''
+}
 
 window.addEventListener("keydown", (e) => teclas[e.key] = true);
 window.addEventListener("keyup", (e) => teclas[e.key] = false);
@@ -164,6 +175,7 @@ sendButton.onclick = () => {
 	};
 
 	socket.onmessage = (evento) => {
+		if (!ready) return;
 		const dados = JSON.parse(evento.data);
 
 		if (dados.isOtherUsername !== username) {
@@ -173,20 +185,24 @@ sendButton.onclick = () => {
 
 		if (dados.ready == true) {
 			console.log("Servidor Pronto")
-			document.getElementById("boolean").style.display = 'flex'
 			serverReady = dados.ready
 		}
 
-		if (dados.serverDied) {
-			serverDied = true
+		if (dados.status == 404) {
+			socket.close()
+			resetGame()
 		}
+
+		document.getElementById("diedCheckC").textContent = `Died: ${dados.serverDied}`
+		document.getElementById("diedCheckS").textContent = `Died: ${dados.clientDied}`
+
+		document.getElementById("hp1").textContent = `${dados.clientHealth}`
+		document.getElementById("hp2").textContent = `${dados.serverHealth}`
 
 		if (dados.damaged && !Debounce.Check("controlAwait")) {
 			vida1.style.width = vida1.clientWidth - 30 + 'px'
 			entitys.player1.health -= 10
 		}
-
-		document.getElementById("boolean").textContent = `Damaged: ${dados.damaged}`
 
 		entitys.player2.x = dados.x;
 		entitys.player2.y = dados.y;
@@ -206,7 +222,7 @@ sendButton.onclick = () => {
 };
 
 function loopPrincipal(tempoAtual) {
-	if (paused) return;
+	if (paused || !ready) return;
 
 	const deltaTime = tempoAtual - ultimoTempo;
 	ultimoTempo = tempoAtual;
@@ -252,6 +268,10 @@ function loopPrincipal(tempoAtual) {
 		clientDied = true
 	}
 
+	if (entitys.player2.health <= 0) {
+		serverDied = true
+	}
+
 	Object.keys(btnsM).forEach(id => {
 		const element = document.getElementById(id)
 		const press = btnsM[id]
@@ -277,11 +297,11 @@ function loopPrincipal(tempoAtual) {
 			isDashing: dashing,
 			isRight: right,
 			ready: ready,
-			myHealth: entitys.player1.health,
-			serverHealth: entitys.player2.health,
+			clientHealth: entitys.player2.health,
+			serverHealth: entitys.player1.health,
 			damaged: controller,
-			clientDied: clientDied,
-			serverDied: serverDied
+			clientDied: serverDied,
+			serverDied: clientDied
 		}));
 		controller = false
 	}
@@ -321,7 +341,7 @@ function renderizar() {
 	}
 
 	if (!serverReady) return;
-	if (serverHealth <= 0) return;
+	if (serverDied) return;
 	ctx.drawImage(
 		imagemOther,
 		frameAtual * larguraSprite, 0, larguraSprite, alturaSprite,
